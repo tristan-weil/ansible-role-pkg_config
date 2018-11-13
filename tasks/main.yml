@@ -1,4 +1,4 @@
 ---
 
 - include_role:
-    name: "t18s.fr_{{ ansible_distribution }}_pkg_config"
+    name: "t18s.fr_{{ ansible_facts['distribution'] }}_pkg_config"
