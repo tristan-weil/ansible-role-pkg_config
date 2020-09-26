@@ -1,0 +1,40 @@
+---
+
+- hosts: all
+  name: 'Verify'
+  become: True
+  gather_facts: True
+
+  tasks:
+    - name: 'Retrieve the list of packages'
+      package_facts:
+        manager: 'auto'
+
+    - name: 'Check the packages are installed'
+      assert:
+        that:
+          - "'haproxy' in ansible_facts['packages']"
+
+    - block:
+        - name: 'Get the content of the source file'
+          slurp:
+            path: '/etc/apt/sources.list.d/haproxy.sources'
+          register: __verify_slurp
+
+        - name: 'Check the content of the source file'
+          assert:
+            that:
+              - __verify_slurp.content | b64decode | regex_search('http://haproxy.debian.net/')
+      when: ansible_facts['os_family'] == 'Debian'
+
+    - block:
+        - name: 'Get the content of the source file'
+          slurp:
+            path: '/etc/installurl'
+          register: __verify_slurp
+
+        - name: 'Check the content of the source file'
+          assert:
+            that:
+              - __verify_slurp.content | b64decode | regex_search('https://ftp.fr.openbsd.org/pub/OpenBSD')
+      when: ansible_facts['os_family'] == 'OpenBSD'

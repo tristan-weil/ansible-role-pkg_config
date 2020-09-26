@@ -1,0 +1,20 @@
+---
+
+- name: 'remove sources.list file'
+  file:
+    path: "{{ pkg_config_apt_sources_list_path }}"
+    state: 'absent'
+  when: pkg_config_apt_sources_list_state != 'present'
+  notify:
+    - 'pkg_config_apt_update_cache_handler'
+
+- name: 'create the apt sources.list file'
+  template:
+    src: 'Debian/etc/apt/sources.list.sources.j2'
+    dest: "{{ pkg_config_apt_sources_list_path }}"
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  when: pkg_config_apt_sources_list_state == 'present'
+  notify:
+    - 'pkg_config_apt_update_cache_handler'

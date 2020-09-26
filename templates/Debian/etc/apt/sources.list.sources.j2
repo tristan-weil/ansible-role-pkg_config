@@ -1,0 +1,71 @@
+{% if pkg_config_apt_sources_list_path == '/etc/apt/sources.list' -%}
+{% for apt_config_repo in pkg_config_apt_sources_list_repos %}
+deb {{ apt_config_repo.uri }} {{ apt_config_repo.suites }} {{ apt_config_repo.components }}
+{% endfor %}
+{% else -%}
+{% for apt_config_repo in pkg_config_apt_sources_list_repos %}
+Types: {{ apt_config_repo.types | default(['deb']) | join(' ') }}
+URIs: {{ apt_config_repo.uri }}
+Suites: {% if apt_config_repo.suites is string %}
+{{ apt_config_repo.suites }}
+{% else %}
+{{ apt_config_repo.suites | join(' ') }}
+{% endif %}
+Components: {% if apt_config_repo.components is string %}
+{{ apt_config_repo.components }}
+{% else %}
+{{ apt_config_repo.components | join(' ') }}
+{% endif %}
+{% if apt_config_repo.architectures is defined -%}
+Architectures: {% if apt_config_repo.architectures is string %}
+{{ apt_config_repo.architectures }}
+{% else %}
+{{ apt_config_repo.architectures | join(' ') }}
+{% endif %}
+{% endif %}
+{% if apt_config_repo.languages is defined -%}
+Languages: {% if apt_config_repo.languages is string %}
+{{ apt_config_repo.languages }}
+{% else %}
+{{ apt_config_repo.languages | join(' ') }}
+{% endif %}
+{% endif %}
+{% if apt_config_repo.targets is defined -%}
+Targets: {% if apt_config_repo.targets is string %}
+{{ apt_config_repo.targets }}
+{% else %}
+{{ apt_config_repo.targets | join(' ') }}
+{% endif %}
+{% endif %}
+{% if apt_config_repo.pdiffs is defined -%}
+PDiffs: {{ apt_config_repo.pdiffs }}
+{% endif %}
+{% if apt_config_repo.by_hash is defined -%}
+By-Hash: {{ apt_config_repo.by_hash }}
+{% endif %}
+{% if apt_config_repo.allow_insecure is defined -%}
+Allow-Insecure: {{ apt_config_repo.allow_insecure }}
+{% endif %}
+{% if apt_config_repo.allow_weak is defined -%}
+Allow-Weak: {{ apt_config_repo.allow_weak }}
+{% endif %}
+{% if apt_config_repo.allow_downgrade_to_insecure is defined -%}
+Allow-Downgrade-To-Insecure: {{ apt_config_repo.allow_downgrade_to_insecure }}
+{% endif %}
+{% if apt_config_repo.trusted is defined -%}
+Trusted: {{ apt_config_repo.trusted }}
+{% endif %}
+{% if apt_config_repo.signed_by is defined -%}
+Signed-By: {{ apt_config_repo.signed_by }}
+{% endif %}
+{% if apt_config_repo.check_valid_until is defined -%}
+Check-Valid-Until: {{ apt_config_repo.check_valid_until }}
+{% endif %}
+{% if apt_config_repo.valid_until_min is defined -%}
+Valid-Until-Min: {{ apt_config_repo.valid_until_min }}
+{% endif %}
+{% if apt_config_repo.valid_until_max is defined -%}
+Valid-Until-Max: {{ apt_config_repo.valid_until_max }}
+{% endif %}
+{% endfor %}
+{% endif %}

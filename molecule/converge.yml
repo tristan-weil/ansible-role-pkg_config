@@ -1,0 +1,29 @@
+---
+
+- hosts: all
+  name: 'Converge'
+  become: True
+  vars:
+    __pkg_config_haproxy_debian_suites_by_release:
+      buster: "{{ ansible_facts['distribution_release'] }}-backports"
+
+  tasks:
+    - import_role:
+        name: 'ansible-role-pkg_config'
+      vars:
+        # OpenBSD
+        pkg_config_pkg_add_installurl: 'https://ftp.fr.openbsd.org/pub/OpenBSD'
+
+        # Debian
+        pkg_config_apt_sources_list_path: '/etc/apt/sources.list.d/haproxy.sources'
+        pkg_config_apt_sources_list_repos:
+          - uri: 'http://haproxy.debian.net/'
+            suites: "{{ __pkg_config_haproxy_debian_suites_by_release[ ansible_facts['distribution_release'] ] }}-2.0"
+            components: 'main'
+        pkg_config_apt_key_urls:
+          - url: 'https://haproxy.debian.net/bernat.debian.org.gpg'
+
+    - name: 'install haproxy'
+      package:
+        name: 'haproxy'
+        state: 'present'

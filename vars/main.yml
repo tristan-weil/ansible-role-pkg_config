@@ -1,0 +1,22 @@
+---
+
+##############################################################################
+# Variables
+##############################################################################
+_pkg_config_apt_sources_list_path_defaut: '/etc/apt/sources.list'
+_pkg_config_apt_sources_list_repos_defaut:
+  - uri: 'https://deb.debian.org/debian/'
+    suites: "{{ ansible_facts['distribution_release'] }}"
+    components: 'main contrib non-free'
+
+  - uri: 'https://deb.debian.org/debian/'
+    suites: "{{ ansible_facts['distribution_release'] }}-updates"
+    components: 'main contrib non-free'
+
+  - uri: 'https://deb.debian.org/debian-security/'
+    suites: "{{ ansible_facts['distribution_release'] }}/updates"
+    components: 'main contrib non-free'
+
+  - uri: 'https://deb.debian.org/debian/'
+    suites: "{{ ansible_facts['distribution_release'] }}-backports"
+    components: 'main contrib non-free'

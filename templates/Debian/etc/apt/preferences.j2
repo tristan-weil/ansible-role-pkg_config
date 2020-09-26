@@ -1,0 +1,27 @@
+{% for pref in pkg_config_apt_preferences_pkgs -%}
+{%      if pref.packages is defined -%}
+{%          if pref.packages is string -%}
+Package: {{ pref.packages }}
+{%          else -%}
+Package: {{ pref.packages | join(" ") }}
+{%          endif -%}
+{%      else -%}
+Package: *
+{%      endif -%}
+{%      if pref.pin is string -%}
+Pin: {{ pref.pin }}
+{%      else -%}
+Pin: {{ pref.pin.type }} {%          if pref.pin.value is defined -%}
+{{ pref.pin.value }}
+{%-         else -%}
+{%- set pins = [] -%}
+{%-              if pref.pin.origin is defined -%}{%- set pins = pins + [ 'o=' + pref.pin.origin ] -%}{% endif -%}
+{%-              if pref.pin.codename is defined -%}{%- set pins = pins + [ 'n=' + pref.pin.codename ] -%}{%- endif -%}
+{%-              if pref.pin.label is defined -%}{%- set pins = pins + [ 'l=' + pref.pin.label ] -%}{%- endif -%}
+{%-              if pref.pin.component is defined -%}{%- set pins = pins + [ 'c=' + pref.pin.component ] -%}{%- endif -%}
+{{ pins | join(',') }}
+{%           endif -%}
+{%      endif %}
+Pin-Priority: {{ pref.priority }}
+
+{% endfor %}

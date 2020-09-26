@@ -1,4 +1,5 @@
 ---
 
-- include_role:
-    name: "t18s.fr_{{ ansible_facts['distribution'] }}_pkg_config"
+- include_tasks: "{{ ansible_facts['os_family'] }}/main.yml"
+
+- meta: 'flush_handlers'

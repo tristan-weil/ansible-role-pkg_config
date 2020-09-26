@@ -1,0 +1,25 @@
+---
+
+###################################
+# Debian
+###################################
+pkg_config_apt_sources_list_path: "{{ _pkg_config_apt_sources_list_path_defaut }}"
+pkg_config_apt_sources_list_repos: "{{ _pkg_config_apt_sources_list_repos_defaut }}"
+pkg_config_apt_sources_list_state: present
+
+# pkg_config_apt_preferences_name:
+pkg_config_apt_preferences_pkgs: []
+pkg_config_apt_preferences_state: present
+
+pkg_config_apt_key_urls: []
+# - url:
+#   state
+
+pkg_config_apt_key_servers: []
+# - keyserver:
+#   id
+
+###################################
+# OpenBSD
+###################################
+pkg_config_pkg_add_installurl: https://cdn.openbsd.org/pub/OpenBSD

@@ -1,0 +1,9 @@
+---
+
+- include_tasks: 'config.yml'
+
+- include_tasks: 'sources.yml'
+
+- include_tasks: 'preferences.yml'
+
+- include_tasks: 'keys.yml'

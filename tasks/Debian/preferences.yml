@@ -1,0 +1,24 @@
+---
+
+- name: 'remove preferences file'
+  file:
+    path: "/etc/apt/preferences.d/{{ pkg_config_apt_preferences_name }}"
+    state: 'absent'
+  when: >
+    pkg_config_apt_preferences_name is defined
+    and pkg_config_apt_preferences_state != 'present'
+  notify:
+    - 'pkg_config_apt_update_cache_handler'
+
+- name: 'create the apt preferences file'
+  template:
+    src: 'Debian/etc/apt/preferences.j2'
+    dest: "/etc/apt/preferences.d/{{ pkg_config_apt_preferences_name }}"
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  when: >
+      pkg_config_apt_preferences_name is defined
+      and pkg_config_apt_preferences_state == 'present'
+  notify:
+    - 'pkg_config_apt_update_cache_handler'

@@ -1,40 +1,173 @@
-# Ansible Role: pkg_config
+# Ansible Role: OpenBSD_pkg_config
 
-An Ansible role that wraps the package configuration role for Debian and OpenBSD.
+An Ansible Role that configures the package manager.
 
-**NOTE**: the distrib role should be used directly for clarity.
-This role is only meaningfull in a playbook.
+[![Actions Status](https://github.com/tristan-weil/ansible-role-pkg_config_config/workflows/molecule/badge.svg?branch=master)](https://github.com/tristan-weil/ansible-role-pkg/actions)
 
 ## Role Variables
 
-None (see distrib role).
+Available variables are listed below, (see also `defaults/main.yml`).
 
-## Dependencies
+### OpenBSD
 
-None.
+Mandatory variables:
+
+| Variable      | Description |
+| :------------ | :---------- |
+
+Optional variables:
+
+| Variable      | Default | Description |
+| :------------ | :------ | :---------- |
+| pkg_config_pkg_add_installurl | https://cdn.openbsd.org/pub/OpenBSD | the url of the OpenBSD repository |
+
+### Debian
+
+Except for `/etc/apt/sources.list`, all files use the DEB822-style format.
+
+Mandatory variables:
+
+| Variable      | Description |
+| :------------ | :---------- |
+| apt_config_sources_list_path | the path of the source file |
+| apt_config_sources_list_repos | a list of <*debian_repository*> |
+| apt_config_preferences_name | the name of the preference file |
+| apt_config_preferences_pkgs | a list of <*debian_package_preferences*> |
+
+Optional variables:
+
+| Variable      | Default | Description |
+| :------------ | :------ | :---------- |
+| apt_config_sources_list_state | present | *present / absent* : the state of the source file |
+| apt_config_preferences_state | present | *present / absent* : the state of the preference file |  
+| apt_config_key_urls | [] | a list of <*debian_keys_urls*> |
+| apt_config_key_server | [] | a list of <*debian_keyservers_and_ids*> |
+
+#### <*debian_repository*>
+
+Mandatory variables:
+
+| Variable      | Description |
+| :------------ | :---------- |
+| uri           | the uri of the repository |
+| suites        | the distribution |
+| components    | the components |  
+
+Optional variables:
+
+| Variable      | Default | Description |
+| :------------ | :------ | :---------- |
+| architectures | | |
+| languages | | |
+| targets | | |
+| pdiffs | | |
+| by_hash | | |
+| allow_insecure | | |
+| allow_weak | | |
+| allow_downgrade_to_insecure | | |
+| trusted | | |
+| signed_by | | |
+| check_valid_until | | |
+| valid_until_min | | |
+| valid_until_max | | |
+
+#### <*debian_package_preferences*>
+
+Mandatory variables:
+
+| Variable      | Description |
+| :------------ | :---------- |
+| uri           | the uri of the repository |
+| suites        | the distribution |
+| components    | the components |  
+
+Optional variables:
+
+| Variable      | Default | Description |
+| :------------ | :------ | :---------- |
+| pin_origin | | |
+| origin | | | 
+| codename | | |
+| label | | |
+| component | | |
+| priority | | |
+
+#### <*debian_keys_urls*>
+
+Some repositories need to be trusted by using a key fetched from an URL or from a file.
+
+Mandatory variables:
+
+| Variable      | Description |
+| :------------ | :---------- |
+| url           | the url of the key file |
+
+Optional variables:
+
+| Variable      | Default | Description |
+| :------------ | :------ | :---------- |
+| state         | present | *present / absent* : the state of the key |
+
+#### <*debian_keyservers_and_ids*>
+
+Some repositories need to be trusted by using a key fetched from a keyserver.
+
+Mandatory variables:
+
+| Variable      | Description |
+| :------------ | :---------- |
+| keyserver     | the keyserver uri |
+| id            | the ID of the key |
+
+Optional variables:
+
+| Variable      | Default | Description |
+| :------------ | :------ | :---------- |
 
 ## Example Playbook
 
-None (see distrib role).
+    - hosts: 'webservers'
+      roles:
+        - role: 'ansible-role-pkg_config_config_config'
+          pkg_config_apt_sources_list_path: '/etc/apt/sources.list'
+          pkg_config_apt_sources_list_repos:
+            - uri: 'http://deb.debian.org/debian/'
+              suites: "{{ ansible_facts['distribution_release'] }}"
+              components: 'main contrib non-free'
+        
+            - uri: 'http://deb.debian.org/debian/'
+              suites: "{{ ansible_facts['distribution_release'] }}-updates"
+              components: 'main contrib non-free'
+        
+            - uri: 'http://security.debian.org/'
+              suites: "{{ ansible_facts['distribution_release'] }}/updates"
+              components: 'main contrib non-free'
+        
+            - uri: 'http://deb.debian.org/debian/'
+              suites: "{{ ansible_facts['distribution_release'] }}-backports"
+              components: 'main contrib non-free'
+
+        - role: 'ansible-role-pkg_config_config_config'
+          pkg_config_apt_sources_list_path: '/etc/apt/sources.list.d/haproxy.sources'
+          pkg_config_apt_sources_list_repos:
+            - uri: 'http://haproxy.debian.net/'
+              suites: "stretch-backports-2.0"
+              components: 'main'
+          pkg_config_apt_key_urls:
+            - url: 'https://haproxy.debian.net/bernat.debian.org.gpg'
 
 ## Todo
 
 None.
 
+## Dependencies
+
+None.
+
+## Supported platforms
+
+See [meta/main.yml](https://github.com/tristan-weil/ansible-role-pkg_config/blob/master/meta/main.yml)
+
 ## License
 
-```
-Copyright (c) 2018, 2019 Tristan Weil <titou@lab.t18s.fr>
-
-Permission to use, copy, modify, and distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-```
+See [LICENSE.md](https://github.com/tristan-weil/ansible-role-pkg_config/blob/master/LICENSE.md)

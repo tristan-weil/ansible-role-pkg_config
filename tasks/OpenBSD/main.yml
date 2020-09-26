@@ -1,0 +1,9 @@
+---
+
+- name: 'update /etc/installurl'
+  copy:
+    content: "{{ pkg_config_pkg_add_installurl }}"
+    dest: '/etc/installurl'
+    owner: 'root'
+    group: 'wheel'
+    mode: '0644'

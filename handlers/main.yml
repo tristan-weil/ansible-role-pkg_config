@@ -1,0 +1,5 @@
+---
+
+- name: 'pkg_config_apt_update_cache_handler'
+  apt:
+    update_cache: True
