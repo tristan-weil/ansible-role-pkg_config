@@ -4,37 +4,24 @@
   name: 'Verify'
   become: True
   gather_facts: True
+  vars:
+    __verify_pkgconf_by_os_family:
+      Debian: '/etc/apt/sources.list.d/haproxy.sources'
+      OpenBSD: '/etc/installurl'
+
+    __verify_content_by_os_family:
+      Debian: 'http://haproxy.debian.net/'
+      OpenBSD: 'https://ftp.fr.openbsd.org/pub/OpenBSD'
 
   tasks:
-    - name: 'Retrieve the list of packages'
-      package_facts:
-        manager: 'auto'
-
     - name: 'Check the packages are installed'
-      assert:
-        that:
-          - "'haproxy' in ansible_facts['packages']"
+      package:
+        name: 'haproxy'
+      register: __verify_pkg
+      failed_when: __verify_pkg.changed
 
-    - block:
-        - name: 'Get the content of the source file'
-          slurp:
-            path: '/etc/apt/sources.list.d/haproxy.sources'
-          register: __verify_slurp
-
-        - name: 'Check the content of the source file'
-          assert:
-            that:
-              - __verify_slurp.content | b64decode | regex_search('http://haproxy.debian.net/')
-      when: ansible_facts['os_family'] == 'Debian'
-
-    - block:
-        - name: 'Get the content of the source file'
-          slurp:
-            path: '/etc/installurl'
-          register: __verify_slurp
-
-        - name: 'Check the content of the source file'
-          assert:
-            that:
-              - __verify_slurp.content | b64decode | regex_search('https://ftp.fr.openbsd.org/pub/OpenBSD')
-      when: ansible_facts['os_family'] == 'OpenBSD'
+    - name: 'Get the content of the source file'
+      slurp:
+        path: "{{ __verify_pkgconf_by_os_family[ ansible_facts['os_family'] ] }}"
+      register: __verify_slurp
+      failed_when: not __verify_slurp.content | b64decode | regex_search(__verify_content_by_os_family[ ansible_facts['os_family'] ])
