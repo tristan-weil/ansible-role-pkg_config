@@ -170,4 +170,4 @@ See [meta/main.yml](https://github.com/tristan-weil/ansible-role-pkg_config/blob
 
 ## License
 
-See [LICENSE.md](https://github.com/tristan-weil/ansible-role-pkg_config/blob/master/LICENSE.md)
+See [LICENSE.md](LICENSE.md)
